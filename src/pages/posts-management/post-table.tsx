@@ -1,13 +1,14 @@
-import { Box } from "@mantine/core";
 import { MRT_ColumnDef, MantineReactTable, useMantineReactTable } from "mantine-react-table";
+import { IconEdit } from "@tabler/icons-react";
 import { useMemo } from "react";
 import { Post } from "~/types";
 
 type PostTableProps = {
   data: Post[];
+  onViewDetail: (item: Post) => void;
 };
 export function PostTable(props: PostTableProps) {
-  const { data } = props;
+  const { data, onViewDetail } = props;
 
   const columns = useMemo<MRT_ColumnDef<Post>[]>(
     () => [
@@ -33,7 +34,14 @@ export function PostTable(props: PostTableProps) {
 
   const table = useMantineReactTable({
     columns,
-    data
+    data,
+    initialState: { density: "xs" },
+    enableDensityToggle: false,
+    enableRowActions: true,
+    positionActionsColumn: "last",
+    renderRowActions: ({ row }) => (
+      <IconEdit className="hover:cursor-pointer" onClick={() => onViewDetail(row.original)} />
+    )
   });
 
   return <MantineReactTable table={table} />;
