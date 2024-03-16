@@ -1,26 +1,28 @@
 import { Modal, Text, Title } from "@mantine/core";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Post } from "~/types";
 import { PostTable } from "./post-table";
 import { API_POSTS } from "~/constants";
 import { useDisclosure } from "@mantine/hooks";
 import { PostDetailModal } from "./post-detail-modal";
+import { useQuery } from "@tanstack/react-query";
 
 export function PostsManagement() {
-  const [dataTable, setDataTable] = useState<Post[]>([]);
   const [isOpenModal, { open: openModal, close: closeModal }] = useDisclosure(false);
   const [selectedItem, setSelectedItem] = useState<Post>();
-  useEffect(() => {
-    fetchDataPost();
-  }, []);
 
-  const fetchDataPost = async () => {
+  const { data: postList, isFetching } = useQuery({
+    queryKey: ["postList"],
+    queryFn: () => fetchDataPost()
+  });
+
+  const fetchDataPost = async (): Promise<Post[]> => {
     try {
       const response = await axios.get(API_POSTS);
-      setDataTable(response.data);
+      return response.data;
     } catch (error) {
-      console.error("Error fetching posts:", error);
+      return [];
     }
   };
 
@@ -34,7 +36,7 @@ export function PostsManagement() {
         Post Management
       </Title>
 
-      <PostTable data={dataTable} onViewDetail={handleRowSelected} />
+      <PostTable data={postList} onViewDetail={handleRowSelected} isFetching={isFetching} />
 
       {!!selectedItem && (
         <Modal

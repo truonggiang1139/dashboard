@@ -4,11 +4,12 @@ import { useMemo } from "react";
 import { Post } from "~/types";
 
 type PostTableProps = {
-  data: Post[];
+  data?: Post[];
+  isFetching: boolean;
   onViewDetail: (item: Post) => void;
 };
 export function PostTable(props: PostTableProps) {
-  const { data, onViewDetail } = props;
+  const { data = [], isFetching, onViewDetail } = props;
 
   const columns = useMemo<MRT_ColumnDef<Post>[]>(
     () => [
@@ -35,6 +36,9 @@ export function PostTable(props: PostTableProps) {
   const table = useMantineReactTable({
     columns,
     data,
+    state: {
+      isLoading: isFetching
+    },
     initialState: { density: "xs" },
     enableDensityToggle: false,
     enableRowActions: true,
