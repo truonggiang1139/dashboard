@@ -31,7 +31,7 @@ function App() {
       ]
     },
     {
-      path: path.postManagement,
+      path: path.post,
       element: <PostsManagement />
     },
     {
